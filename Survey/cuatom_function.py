@@ -21,6 +21,13 @@ def delete_files():
         shutil.rmtree(path+'/'+files, ignore_errors = False)
     return 0
 
+def delete_files_temp(path):
+    path_list=os.listdir(path)
+    # print(path_list)
+    for files in path_list:
+        shutil.rmtree(path+'/'+files, ignore_errors = False)
+    return 0
+
             
 def return_keys_value(dict):
     answer=list(dict.values())

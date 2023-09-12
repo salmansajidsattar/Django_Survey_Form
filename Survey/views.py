@@ -32,18 +32,26 @@ from reportlab.lib.utils import ImageReader
 from django.core.files.uploadedfile import TemporaryUploadedFile
 import shutil
 from reportlab.lib import utils
+import tempfile
+from io import BytesIO
 
 Question_num=Question.objects.all()
 Modern_num=Modern_Home.objects.all()
 Sales_team_num=Sales_team.objects.all()
 Finished_Inventory_num=Finished_Inventory.objects.all()
-
+temp_dir = None
+pdf_file_temp_dir=None
 def index(request):
+    global temp_dir
+    temp_dir=tempfile.mkdtemp()
     data={"Question":Question_num,"Modern_Home":Modern_num,"Sales_team":Sales_team_num,"Finished_Inventory":Finished_Inventory_num}
     return render(request,'index.html',context=data)
 
+
 @csrf_exempt
 def Temp_data(request):
+    global temp_dir
+    print("temp_dir",temp_dir)
     if request.method == 'POST':
         front_images_pixel=[]
         address=request.POST.get('address')
@@ -53,7 +61,7 @@ def Temp_data(request):
             for image_path in front_images:
                 temp_file_path = image_path.temporary_file_path()
                 print(temp_file_path)
-                destination_path = os.path.join('temp_images/'+str(address)+'/front_images',str(image_path.name))
+                destination_path = os.path.join(temp_dir+'/temp_images/'+str(address)+'/front_images',str(image_path.name))
                 os.makedirs(os.path.dirname(destination_path), exist_ok=True)
                 shutil.copy(temp_file_path, destination_path)
 
@@ -63,7 +71,7 @@ def Temp_data(request):
             for image_path in Interior_images:
                 temp_file_path = image_path.temporary_file_path()
                 print(temp_file_path)
-                destination_path = os.path.join('temp_images/'+str(address)+'/Interior_images',str(image_path.name))
+                destination_path = os.path.join(temp_dir+'/temp_images/'+str(address)+'/Interior_images',str(image_path.name))
                 os.makedirs(os.path.dirname(destination_path), exist_ok=True)
                 shutil.copy(temp_file_path, destination_path)
 
@@ -73,7 +81,7 @@ def Temp_data(request):
             for image_path in Back_images:
                 temp_file_path = image_path.temporary_file_path()
                 print(temp_file_path)
-                destination_path = os.path.join('temp_images/'+str(address)+'/Back_images',str(image_path.name))
+                destination_path = os.path.join(temp_dir+'/temp_images/'+str(address)+'/Back_images',str(image_path.name))
                 os.makedirs(os.path.dirname(destination_path), exist_ok=True)
                 shutil.copy(temp_file_path, destination_path)
         Back_notes=request.POST.get('Back_notes')
@@ -189,19 +197,32 @@ def PDF_FILE(request):
     return JsonResponse({'success': True, 'redirect_url': '/return_pdf/'})
 
 def return_pdf(request):
-    return render(request,'pdffileoutput.html')
+    global pdf_buffer
+    pdf_value = pdf_buffer.getvalue()
+    # pdf_buffer.close()
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="some_file.pdf"'
+    response.write(pdf_value)
+    return response
+    # return render(request,'pdffileoutput.html')
 
 def create_pdf(Builder_name,Community_name,Inspected_by,date,summary,Q_summary,S_summary,
             F_summary,H_summary,
             Answer_Q,Answer_H,Answer_S,Answer_F,img_path_Q,des_Q,name_H,des_H,name_S,
             des_S,name_F,des_F):
     logo = "SSE.png"
-    filename=os.getcwd()+'/'+'static/temp_data/output.pdf'
+    global pdf_buffer
+    pdf_buffer= BytesIO()
+    global pdf_file_temp_dir
+    pdf_file_temp_dir=tempfile.mkdtemp()
+    # filename=os.getcwd()+'/'+'static/temp_data/output.pdf'
+    filename=pdf_file_temp_dir+'/'+'output.pdf'
     notes=[Q_summary,H_summary,S_summary,F_summary]
     answer_list=[Answer_Q,Answer_H,Answer_S,Answer_F]
     image_path_code=[img_path_Q,name_H,name_S,name_F]
     image_description_list=[des_Q,des_H,des_S,des_F]
-    doc = SimpleDocTemplate(filename, pagesize=landscape(letter))
+    doc = SimpleDocTemplate(pdf_buffer, pagesize=landscape(letter))
+    doc_local = SimpleDocTemplate(filename, pagesize=landscape(letter))
     story = []
     im = reportlab.platypus.Image(logo, 1*inch, 1*inch)
     story.append(im)
@@ -322,106 +343,113 @@ def create_pdf(Builder_name,Community_name,Inspected_by,date,summary,Q_summary,S
     story.append(Spacer(1, 0.4 * inch))
 
     # Coding part start of  Inventory!
-    path_main=os.getcwd()
-    path=path_main+'/'+'temp_images'
-    path_list=os.listdir(path)
-    ind=path_list.index('null.txt')
-    path_list.pop(ind)
-    dict_counter=0
-    if(len(path_list)!=0):
-        heading = Paragraph("<b>Individual Inventory Homes</b>", styles["Title"])
-        story.append(heading)
-        story.append(Spacer(1, 0.5 * inch))
-
-        for sub_path in path_list:
-            heading = Paragraph("<b>"+str(settings.Individual_Inventory_Homes[dict_counter]['address'])+"</b>", styles["Title"])
+    # path_main=os.getcwd()
+    try:
+        global temp_dir
+        path=temp_dir+'/temp_images'
+        path_list=os.listdir(path)
+        print(path_list)
+        # ind=path_list.index('null.txt')
+        # path_list.pop(ind)
+        dict_counter=0
+        if(len(path_list)!=0):
+            heading = Paragraph("<b>Individual Inventory Homes</b>", styles["Title"])
             story.append(heading)
-            # story.append(Spacer(1, 0.5 * inch))
-            image_folder_path=path+'/'+sub_path
-            print("sub_path",sub_path)
-            for image_class in os.listdir(image_folder_path):
-                table_data_Notes=[]
-                table_data_Notes.append([Paragraph("<b>"+str(image_class)+"</b>", style=getSampleStyleSheet()['Title'])])
-                table_data_Notes_table=Table(table_data_Notes,colWidths=[10*inch])
-                table_data_Notes_table.setStyle(TableStyle([
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('BOTTOMPADDING', (0, 0), (-1, 0), 20),
-                # ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                ('GRID', (0, 0), (-1, -1), 1, colors.black),
-                ]))
-                story.append(table_data_Notes_table)
-                image_data=[]
-                for image_path in os.listdir(image_folder_path+'/'+image_class):
-                    print("final",image_folder_path+'/'+image_class+'/'+image_path)
-                    image_data.append([Image(image_folder_path+'/'+image_class+'/'+image_path, width=240, height=235)])
-                image_data=cuatom_function.return_double_list(image_data)
-                table_image_data = Table(image_data,colWidths=[3.5*inch,3.5*inch,3*inch])
-                table_image_data.setStyle(TableStyle([
-                            # ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                            # ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                            ('GRID', (0, 0), (-1, -1), 1, colors.black),
-                ]))
-                story.append(table_image_data)
+            story.append(Spacer(1, 0.5 * inch))
 
-                if((settings.Individual_Inventory_Homes[dict_counter]['front_notes']!='') and (image_class=='front_images')):
-                        print("enter in the settings.Individual_Inventory_Homes ",image_class,(image_class=='front_images'))
-                        Front_notes_data=[]
-                        front_notes_paragraph = Paragraph("<i> FRONT IMAGES NOTES-:"+str(settings.Individual_Inventory_Homes[dict_counter]['front_notes'])+"</i>", style=getSampleStyleSheet()['Normal'])
-                        Front_notes_data.append([front_notes_paragraph])
-                        table_Front_notes_data = Table(Front_notes_data, colWidths=[10*inch])
-                        table_Front_notes_data.setStyle(TableStyle([
-                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                        ('BOTTOMPADDING', (0, 0), (-1, 0), 20),
-                        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                        ('GRID', (0, 0), (-1, -1), 1, colors.black),]))
-                        story.append(table_Front_notes_data)
-                elif((settings.Individual_Inventory_Homes[dict_counter]['Interior_notes']!='') and(image_class=='Interior_images')):
-                        print("enter in the settings.Individual_Inventory_Homes ",image_class,(image_class=='front_images'))
-                        Front_notes_data=[]
-                        front_notes_paragraph = Paragraph("<i>INTERIOR IMAGES NOTES-:"+str(settings.Individual_Inventory_Homes[dict_counter]['front_notes'])+"</i>", style=getSampleStyleSheet()['Normal'])
-                        Front_notes_data.append([front_notes_paragraph])
-                        table_Front_notes_data = Table(Front_notes_data, colWidths=[10*inch])
-                        table_Front_notes_data.setStyle(TableStyle([
-                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                        ('BOTTOMPADDING', (0, 0), (-1, 0), 20),
-                        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                        ('GRID', (0, 0), (-1, -1), 1, colors.black),]))
-                        story.append(table_Front_notes_data)
-                elif((settings.Individual_Inventory_Homes[dict_counter]['Back_notes']!='') and(image_class=='Back_images')):
-                        print("enter in the settings.Individual_Inventory_Homes ",image_class,(image_class=='front_images'))
-                        Front_notes_data=[]
-                        front_notes_paragraph = Paragraph("<i>BACK IMAGES NOTES-:"+str(settings.Individual_Inventory_Homes[dict_counter]['front_notes'])+"</i>", style=getSampleStyleSheet()['Normal'])
-                        Front_notes_data.append([front_notes_paragraph])
-                        table_Front_notes_data = Table(Front_notes_data, colWidths=[10*inch])
-                        table_Front_notes_data.setStyle(TableStyle([
-                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                        ('BOTTOMPADDING', (0, 0), (-1, 0), 20),
-                        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                        ('GRID', (0, 0), (-1, -1), 1, colors.black),]))
-                        story.append(table_Front_notes_data)
-            Notes_heading_1 = Paragraph(f"<b>Summary Notes</b>", styles["Title"])
-            story.append(Notes_heading_1)
-            table_data_Notes_1=[]
-            summary_Notes_1 = Paragraph("<i>"+str(settings.Individual_Inventory_Homes[dict_counter]['Summary'])+"</i>", style=getSampleStyleSheet()['Normal'])
-            table_data_Notes_1.append([summary_Notes_1])
-            table_data_Notes_table_1=Table(table_data_Notes_1,colWidths=[10*inch])
-            table_data_Notes_table_1.setStyle(TableStyle([
+            for sub_path in path_list:
+                heading = Paragraph("<b>"+str(settings.Individual_Inventory_Homes[dict_counter]['address'])+"</b>", styles["Title"])
+                story.append(heading)
+                # story.append(Spacer(1, 0.5 * inch))
+                image_folder_path=path+'/'+sub_path
+                print("sub_path",sub_path)
+                for image_class in os.listdir(image_folder_path):
+                    table_data_Notes=[]
+                    table_data_Notes.append([Paragraph("<b>"+str(image_class)+"</b>", style=getSampleStyleSheet()['Title'])])
+                    table_data_Notes_table=Table(table_data_Notes,colWidths=[10*inch])
+                    table_data_Notes_table.setStyle(TableStyle([
                     ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
                     ('BOTTOMPADDING', (0, 0), (-1, 0), 20),
-                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                    # ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
                     ('GRID', (0, 0), (-1, -1), 1, colors.black),
-                ]))
-            story.append(table_data_Notes_table_1)
-        End_heading = Paragraph(f"<b>--------END--------</b>", styles["Title"])
-        story.append(End_heading)
-        dict_counter=dict_counter+1
+                    ]))
+                    story.append(table_data_Notes_table)
+                    image_data=[]
+                    for image_path in os.listdir(image_folder_path+'/'+image_class):
+                        print("final",image_folder_path+'/'+image_class+'/'+image_path)
+                        image_data.append([Image(image_folder_path+'/'+image_class+'/'+image_path, width=240, height=235)])
+                    image_data=cuatom_function.return_double_list(image_data)
+                    table_image_data = Table(image_data,colWidths=[3.5*inch,3.5*inch,3*inch])
+                    table_image_data.setStyle(TableStyle([
+                                # ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                                # ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                    ]))
+                    story.append(table_image_data)
+
+                    if((settings.Individual_Inventory_Homes[dict_counter]['front_notes']!='') and (image_class=='front_images')):
+                            print("enter in the settings.Individual_Inventory_Homes ",image_class,(image_class=='front_images'))
+                            Front_notes_data=[]
+                            front_notes_paragraph = Paragraph("<i> FRONT IMAGES NOTES-:"+str(settings.Individual_Inventory_Homes[dict_counter]['front_notes'])+"</i>", style=getSampleStyleSheet()['Normal'])
+                            Front_notes_data.append([front_notes_paragraph])
+                            table_Front_notes_data = Table(Front_notes_data, colWidths=[10*inch])
+                            table_Front_notes_data.setStyle(TableStyle([
+                            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                            ('BOTTOMPADDING', (0, 0), (-1, 0), 20),
+                            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                            ('GRID', (0, 0), (-1, -1), 1, colors.black),]))
+                            story.append(table_Front_notes_data)
+                    elif((settings.Individual_Inventory_Homes[dict_counter]['Interior_notes']!='') and(image_class=='Interior_images')):
+                            print("enter in the settings.Individual_Inventory_Homes ",image_class,(image_class=='front_images'))
+                            Front_notes_data=[]
+                            front_notes_paragraph = Paragraph("<i>INTERIOR IMAGES NOTES-:"+str(settings.Individual_Inventory_Homes[dict_counter]['front_notes'])+"</i>", style=getSampleStyleSheet()['Normal'])
+                            Front_notes_data.append([front_notes_paragraph])
+                            table_Front_notes_data = Table(Front_notes_data, colWidths=[10*inch])
+                            table_Front_notes_data.setStyle(TableStyle([
+                            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                            ('BOTTOMPADDING', (0, 0), (-1, 0), 20),
+                            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                            ('GRID', (0, 0), (-1, -1), 1, colors.black),]))
+                            story.append(table_Front_notes_data)
+                    elif((settings.Individual_Inventory_Homes[dict_counter]['Back_notes']!='') and(image_class=='Back_images')):
+                            print("enter in the settings.Individual_Inventory_Homes ",image_class,(image_class=='front_images'))
+                            Front_notes_data=[]
+                            front_notes_paragraph = Paragraph("<i>BACK IMAGES NOTES-:"+str(settings.Individual_Inventory_Homes[dict_counter]['front_notes'])+"</i>", style=getSampleStyleSheet()['Normal'])
+                            Front_notes_data.append([front_notes_paragraph])
+                            table_Front_notes_data = Table(Front_notes_data, colWidths=[10*inch])
+                            table_Front_notes_data.setStyle(TableStyle([
+                            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                            ('BOTTOMPADDING', (0, 0), (-1, 0), 20),
+                            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                            ('GRID', (0, 0), (-1, -1), 1, colors.black),]))
+                            story.append(table_Front_notes_data)
+                Notes_heading_1 = Paragraph(f"<b>Summary Notes</b>", styles["Title"])
+                story.append(Notes_heading_1)
+                table_data_Notes_1=[]
+                summary_Notes_1 = Paragraph("<i>"+str(settings.Individual_Inventory_Homes[dict_counter]['Summary'])+"</i>", style=getSampleStyleSheet()['Normal'])
+                table_data_Notes_1.append([summary_Notes_1])
+                table_data_Notes_table_1=Table(table_data_Notes_1,colWidths=[10*inch])
+                table_data_Notes_table_1.setStyle(TableStyle([
+                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                        ('BOTTOMPADDING', (0, 0), (-1, 0), 20),
+                        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                    ]))
+                story.append(table_data_Notes_table_1)
+                dict_counter=dict_counter+1
+    except Exception as e:
+        print(e)
+    End_heading = Paragraph(f"<b>--------END--------</b>", styles["Title"])
+    story.append(End_heading)
     doc.build(story)
+    doc_local.build(story)
     try:
-        cuatom_function.delete_files()
-        helper.upload_pdf_file(Builder_name+'_'+Inspected_by)
+        helper.upload_pdf_file(Builder_name+'_'+Inspected_by,filename)
+        cuatom_function.delete_files_temp(pdf_file_temp_dir)
+        cuatom_function.delete_files_temp(temp_dir)
     except:
         pass
