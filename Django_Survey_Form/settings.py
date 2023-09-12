@@ -16,7 +16,8 @@ Individual_Inventory_Homes=[]
 DEBUG = True
 # CSRF_COOKIE_SECURE = False
 
-ALLOWED_HOSTS = ['.vercel.app', '.now.sh','*']
+# ALLOWED_HOSTS = ['.vercel.app', '.now.sh','*']
+ALLOWED_HOSTS=['*']
 INTERNAL_IPS = ('127.0.0.1', '0.0.0.0', 'localhost',)
 
 # Application definition
