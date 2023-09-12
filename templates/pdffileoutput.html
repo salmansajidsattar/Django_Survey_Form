@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load custom_tags %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'style.css'%}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script  src="{% static 'JS/pdf_file.js' %}"></script>
+<script  src="{% static 'JS/pdffile.js' %}"></script>
+<script  src="{% static 'JS/image_function.js' %}"></script>
+<script  src="{% static 'JS/ajax_post_call.js' %}"></script>
+<script  src="{% static 'JS/validation.js' %}"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+<div class="container mt-4">
+    <embed src="{% static 'temp_data/output.pdf' %}" type="application/pdf" width="100%" height="600px" title="PDF-file" />
+</div>
+  <!-- include jQuery library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+  <!-- include FilePond library -->
+  <script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
+  <!-- include FilePond plugins -->
+  <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.js"></script>
+  <!-- include FilePond jQuery adapter -->
+  <script src="https://unpkg.com/jquery-filepond/filepond.jquery.js"></script>
+  
+  
+    <!-- Add Bootstrap JS and jQuery links here -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <!-- Modal -->
+  <!-- Modal -->
+  
+    {% endblock %}

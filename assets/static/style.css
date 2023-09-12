@@ -1,0 +1,130 @@
+.center-rectangle {
+    width: 1200px;
+    height: auto;
+    margin:auto;
+    padding-left: 15px;
+    background-color:#6a9d74;
+    border: 2px solid #ccc;
+  }
+  #imageDescription{
+    margin-left: 15px;
+    width: 320px;
+  }
+  .center-rectangle1 {
+    width: 1200px;
+    height: auto;
+    margin:auto;
+    padding-left: 15px;
+    background-color: #1f78cc;
+    border: 2px solid #ccc;
+  }
+  .center-rectangle2 {
+    width: 1200px;
+    height: auto;
+    margin:auto;
+    padding-left: 15px;
+    background-color: #d6591e;
+    border: 2px solid #ccc;
+  }
+  .center-rectangle3 {
+    width: 1200px;
+    height: auto;
+    margin:auto;
+    padding-left: 15px;
+    background-color: #e22c44;
+    border: 2px solid #ccc;
+  }
+  
+  .btn btn-primary {
+    size: 2px;
+    width: 250px;
+    height: 40px;
+    margin-top: -1px;
+    background-color:#232323;
+    margin-left: 50px;
+  }
+  #imageFile_H1,#imageFile_H2,#imageFile_H3,#imageFile_H4,#imageFile_H5,#imageFile_H6,
+  #imageFile_H7,#imageFile_H8,#imageFile_H9,#imageFile_H10,#imageFile_H11,#imageFile_H12,
+  #imageFile_H13,#imageFile_H14,#imageFile_H15 {
+    size: 2px;
+    width: 250px;
+    height: 40px;
+    margin-top: -1px;
+    background-color:#232323;
+    margin-left: 50px;
+  }
+  #imageFile_F1,#imageFile_F2,#imageFile_F3, #imageFile_F4, #imageFile_F5,
+  #imageFile_F6, #imageFile_F7 {
+    size: 2px;
+    width: 250px;
+    height: 40px;
+    margin-top: -1px;
+    background-color:#232323;
+    margin-left: 50px;
+  }
+  #imageFile_S1,#imageFile_S2,#imageFile_S3,#imageFile_S4,#imageFile_S5,
+  #imageFile_S6,#imageFile_S7{
+    size: 2px;
+    width: 250px;
+    height: 40px;
+    margin-top: -1px;
+    background-color:#232323;
+    margin-left: 50px;
+  }
+  #createPdfButton,#sendCheckboxData{
+      outline-color: transparent;
+      outline-style:solid;
+      box-shadow: 0 0 0 4px #5a01a7;
+  
+  }
+  #button_direc
+  {direction: rtl;
+  }
+  #button_style{
+    margin-top: 84px;
+    margin-left: 50px;
+  }
+#sendCheckboxData {
+    width: 200px;
+    height: auto;
+    margin-bottom: 25px;
+    margin-left: 25px;
+}
+#createPdfButton{
+  width: 400px;
+    height: 60px;
+    margin-bottom: 25px;
+    margin-left: 250px;
+    display: block;
+}
+
+#imageFile_Q1,#imageFile_Q2,#imageFile_Q3,#imageFile_Q4,#imageFile_Q5,#imageFile_Q6,#imageFile_Q7 {
+  size: 2px;
+  width: 250px;
+  height: 40px;
+  margin-top: -1px;
+  background-color:#232323;
+  margin-left: 50px;
+}
+#row-1{
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+#add_button{
+  float: right;
+  margin-right: 30px;
+  margin-top: 15px;
+}
+#Q_Notes{height: 125px;}
+#H_Notes{height: 125px;}
+#F_Notes{height: 125px;}
+#S_Notes{
+  height: 125px;
+}
+#span_id{
+  height: 45px;
+}
+#row-1{
+  margin-right: 5px;
+  width: fit-content;
+}

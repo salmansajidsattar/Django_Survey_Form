@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Survey Application</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'SSE.png' %}" />
+  <!-- Add Bootstrap CSS link here -->
+  <!-- Addind pop links -->
+  <!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Endind -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="{% static 'style.css'%}">
+  <script  src="{% static 'JS/script.js' %}"></script>
+  <script  src="{% static 'JS/pdf_file.js' %}"></script>
+  <script  src="{% static 'JS/ajax_post_call.js' %}"></script>
+  <script  src="{% static 'JS/pdffile.js' %}"></script>
+  <script  src="{% static 'JS/image_function.js' %}"></script>
+  <script  src="{% static 'JS/data.js' %}"></script>
+  <script  src="{% static 'JS/validation.js' %}"></script> 
+
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <!-- Container wrapper -->
+    <div class="container-fluid">
+        <!-- Navbar brand -->
+        <a class="navbar-brand mt-2 mt-lg-0" href="/main">
+            <img src="{% static 'img/SSE_1.png' %}" style="width: auto; height: auto;">
+        </a>
+        <!-- Toggle button -->
+        <div id="button_direc">
+            <div class="col-md-12 text-center">
+             <button type="button" class="btn btn-dark" id="All_Button">All Record</button>  
+         <!-- Right elements -->
+         <a href="admin/">
+            <button type="submit" class="btn btn-warning" id="Admin_button">Admin</button>
+        </a>
+        </div>
+    </div>
+
+        
+        <!-- Collapsible wrapper -->
+    </div>
+    <!-- Container wrapper -->
+</nav>
+<!-- Navbar -->
+{% block content%}
+
+{% endblock %}
+
+
+<div style="height: 150px;"></div>
+
+<!-- Footer -->
+<footer class="bg-primary text-center text-white fixed-bottom">
+    <!-- Copyright -->
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        © 2023 Copyright:
+        <a class="text-white" href="https://mdbootstrap.com/">SSE</a>
+    </div>
+    <!-- Copyright -->
+</footer>
+<!-- Footer -->
+  <!-- Add Bootstrap JS and jQuery links here -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</body>
+</html>
