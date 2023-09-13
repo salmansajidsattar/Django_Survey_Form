@@ -15,7 +15,5 @@ urlpatterns = [
     path('main/Temp_data',views.Temp_data),
     path('Temp_data',views.Temp_data),
     path('return_pdf/',views.return_pdf),
-    path('only_return/return_pdf/',views.return_pdf),
-    path('only_return/',views.only_return),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -32,7 +32,7 @@ function check_validation(){
         console.log("error-->5")
         return "error"
     }
-    else{python
+    else{
         console.log("OK-->1")
         return "ok"
     }   
