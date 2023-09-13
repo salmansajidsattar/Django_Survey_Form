@@ -12,31 +12,31 @@ function check_validation(){
     let dict_Home=Fetch_data('#Home_Class', '#Home_label')
     let dict_sales=Fetch_data('#sales_class', '#Sales_label')
     let dict_inventory=Fetch_data('#inventory_class', '#Inventory_label')
-    // if((Builder.checkValidity()==false)||(Community.checkValidity()==false)||(Q_Notes.checkValidity()==false)||(S_Notes.checkValidity()==false)||(H_Notes.checkValidity()==false)||(F_Notes.checkValidity()==false)||(Summary_Notes.checkValidity==false)){
-    //     console.log("error-->1")
-    //     return "error"
-    // }
-    // else if (Object.keys(dict_Question).length!=7==true){
-    //     console.log("error-->2")
-    //     return "error"
-    // }
-    // else if (Object.keys(dict_Home).length!=15==true){
-    //     console.log("error-->3")
-    //     return "error"
-    // }
-    // else if (Object.keys(dict_sales).length!=7==true){
-    //     console.log("error-->4")
-    //     return "error"
-    // }
-    // else if (Object.keys(dict_inventory).length!=7==true){
-    //     console.log("error-->5")
-    //     return "error"
-    // }
-    // else{python
-    //     console.log("OK-->1")
-    //     return "ok"
-    // }   
-    return "ok"
+    if((Builder.checkValidity()==false)||(Community.checkValidity()==false)||(Q_Notes.checkValidity()==false)||(S_Notes.checkValidity()==false)||(H_Notes.checkValidity()==false)||(F_Notes.checkValidity()==false)||(Summary_Notes.checkValidity==false)){
+        console.log("error-->1")
+        return "error"
+    }
+    else if (Object.keys(dict_Question).length!=7==true){
+        console.log("error-->2")
+        return "error"
+    }
+    else if (Object.keys(dict_Home).length!=15==true){
+        console.log("error-->3")
+        return "error"
+    }
+    else if (Object.keys(dict_sales).length!=7==true){
+        console.log("error-->4")
+        return "error"
+    }
+    else if (Object.keys(dict_inventory).length!=7==true){
+        console.log("error-->5")
+        return "error"
+    }
+    else{python
+        console.log("OK-->1")
+        return "ok"
+    }   
+    // return "ok"
 }
 
 function Individual_validation(){

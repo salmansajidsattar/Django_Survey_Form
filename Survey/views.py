@@ -194,7 +194,17 @@ def PDF_FILE(request):
             F_summary=F_Notes,H_summary=H_Notes,
             Answer_Q=Question_list,Answer_H=Home_list,Answer_S=sales_list,Answer_F=inventory_list,
             img_path_Q=name_Q,des_Q=des_Q,name_H=name_H,des_H=des_H,name_S=name_S,des_S=des_S,name_F=name_F,des_F=des_F)
-    return JsonResponse({'success': True, 'redirect_url': '/return_pdf/'})
+        global pdf_buffer
+        pdf_value = pdf_buffer.getvalue()
+        # pdf_buffer.close()
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{builder}-{inspected_by}_data.pdf"'
+        response.write(pdf_value)
+        return response
+        # return JsonResponse({'success': True, 'redirect_url': '/return_pdf/'})
+
+def only_return(request):
+    return render(request,'pdffileoutput.html')
 
 def return_pdf(request):
     global pdf_buffer

@@ -115,6 +115,7 @@ $(document).ready(function() {
             // contentType: 'multipart/form-data',
           }).done(function(data) {
             document.getElementById("uploadForm").reset();
+            document.querySelector("#paragraphInputfinal").value='';
               console.log("log",data) // let's just print the data in the console for now
               window.location.href = data.redirect_url;
             })
